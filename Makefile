@@ -8,7 +8,7 @@ detect-changes:
 	if [ branch_name == 'main' ] ; then \
 		git diff --name-only HEAD~1 HEAD > $(changeset) ;\
 	else \
-		git diff --name-only origin/main origin/${GITHUB_HEAD_REF} > $(changeset) ;\
+		git diff --name-only origin/main origin/${branch_name} > $(changeset) ;\
 	fi
 
 detect-airflow-changes: $(changeset)
