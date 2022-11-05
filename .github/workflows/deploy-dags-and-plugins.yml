@@ -42,5 +42,9 @@ jobs:
 
       - name: 'Install dependencies'
         run: python -m pip install python-dotenv==0.21.0
-      
-        
+
+      - name: 'Detect changes'
+        run: |
+          make detect-changes
+          make detect-airflow-changes
+          cat .changeset.python | python cicd/stage_dags.py
