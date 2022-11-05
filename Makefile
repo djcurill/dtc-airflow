@@ -1,5 +1,4 @@
-.SHELLFLAGS := -ec # exit scripts on error
-MAKEFLAGS := s # don't print commands
+SHELL := /bin/bash
 changeset := .changeset
 dags := .changeset.dags
 PYTHON := python3
