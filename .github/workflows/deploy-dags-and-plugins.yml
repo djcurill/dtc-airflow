@@ -42,11 +42,14 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: 'Install dependencies'
-        run: python -m pip install python-dotenv==0.21.0
+      - name: 'Git diff'
+        run: git diff --name-only main
 
-      - name: 'Detect changes'
-        run: |
-          make detect-changes
-          make detect-airflow-changes
-          cat .changeset.dags | python cicd/stage_dags.py
+      # - name: 'Install dependencies'
+      #   run: python -m pip install python-dotenv==0.21.0
+
+      # - name: 'Detect changes'
+      #   run: |
+      #     make detect-changes
+      #     make detect-airflow-changes
+      #     cat .changeset.dags | python cicd/stage_dags.py
