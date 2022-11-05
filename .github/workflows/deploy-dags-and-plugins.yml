@@ -49,4 +49,4 @@ jobs:
         run: |
           make detect-changes
           make detect-airflow-changes
-          cat .changeset.python | python cicd/stage_dags.py
+          cat .changeset.dags | python cicd/stage_dags.py
