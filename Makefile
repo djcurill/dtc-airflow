@@ -9,7 +9,8 @@ detect-changes:
 		git diff --name-only HEAD~1 HEAD > $(changeset) ;\
 	else \
 		git diff --name-only origin/main > $(changeset) ;\
-	fi
+	fi \
+	cat $(changeset) | grep -E 'dags/.*.py|plugins/.*.py' > $(dags) ;
 
 detect-airflow-changes: $(changeset)
 	cat $(changeset) | grep -E 'dags/.*.py|plugins/.*.py' > $(dags)
