@@ -48,4 +48,4 @@ jobs:
       - name: 'Detect changes'
         run: |
           make detect-changes
-          make detect-airflow-changes
+          cat .changeset | grep -E 'dags/.*.py|plugins/.*.py'
