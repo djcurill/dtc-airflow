@@ -48,4 +48,4 @@ jobs:
       - name: 'Detect changes'
         run: |
           make detect-changes
-          cat .changeset
+          make detect-airflow-changes
