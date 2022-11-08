@@ -1,3 +1,7 @@
+"""
+Author: Daniel Curilla
+Description: Upload yellow taxi trips to GCP
+"""
 import os
 from datetime import datetime
 
@@ -5,9 +9,8 @@ import pyarrow.parquet as pq
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.operators.bigquery import (
-    BigQueryCreateExternalTableOperator,
-)
+from airflow.providers.google.cloud.operators.bigquery import \
+    BigQueryCreateExternalTableOperator
 from google.cloud import storage
 from pandas import DataFrame
 
