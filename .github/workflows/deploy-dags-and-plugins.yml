@@ -1,0 +1,52 @@
+name: deploy-dags-and-plugins
+run-name: ${{ github.actor }} is deploying to GCP Composer
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  deploy:
+    name: 'Deploy Dags'
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: OpenID connect
+        id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+      
+      - name: 'Set up Google Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v0
+
+      - name: 'Setup Python'
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: 'Install dependencies'
+        run: python -m pip install python-dotenv==0.21.0
+
+      - name: 'Detect changes'
+        run: make detect-changes
+          
+      - name: 'Deploy to GCP'
+        run: make cicd-deploy
