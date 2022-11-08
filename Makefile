@@ -3,6 +3,7 @@ SHELL := /bin/bash
 changeset := .changeset
 deployset := .changeset.deploy
 PYTHON := python3
+GCP_COMPOSER_BUCKET ?= ${GCP_COMPOSER_BUCKET}
 
 detect-changes:
 	branch_name=$$(git rev-parse --abbrev-ref HEAD)
@@ -12,7 +13,7 @@ detect-changes:
 		git diff --name-only origin/main > $(changeset) ;\
 	fi
 	cat $(changeset) | python cicd/stage_changes.py > $(deployset)
-	cat $(deployset)
 
 cicd-deploy:
-	cat $(deployset)
+	cat $(deployset) | gsutil -m cp -I $(GCP_COMPOSER_BUCKET)
+	
