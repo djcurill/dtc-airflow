@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-SHELLFLAGS := -s
+MAKEFLAGS := s
 changeset := .changeset
 deployset := .changeset.deploy
 PYTHON := python3
