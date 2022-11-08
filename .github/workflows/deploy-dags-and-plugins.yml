@@ -46,7 +46,9 @@ jobs:
         run: python -m pip install python-dotenv==0.21.0
 
       - name: 'Detect changes'
-        run: make detect-changes
+        run: |
+          make detect-changes
+          make cicd-deploy
           
-      - name: 'Deploy to GCP'
-        run: make cicd-deploy
+      # - name: 'Deploy to GCP'
+      #   run: make cicd-deploy
