@@ -15,4 +15,4 @@ detect-changes:
 	cat $(deployset)
 
 cicd-deploy:
-	cat $(deployset) | python cicd/deploy.py
+	cat $(deployset)
