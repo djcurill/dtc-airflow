@@ -12,6 +12,7 @@ detect-changes:
 		git diff --name-only origin/main > $(changeset) ;\
 	fi
 	cat $(changeset) | python cicd/stage_changes.py > $(deployset)
+	cat $(deployset)
 
 cicd-deploy:
 	cat $(deployset) | python cicd/deploy.py
