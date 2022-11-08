@@ -47,7 +47,7 @@ jobs:
 
       - name: 'Detect changes'
         env:
-          GCP_COMPOSER_BUCKET=${{ secrets.GCP_COMPOSER_BUCKET  }}
+          GCP_COMPOSER_BUCKET: ${{ secrets.GCP_COMPOSER_BUCKET  }}
         run: |
           make detect-changes
           make cicd-deploy
