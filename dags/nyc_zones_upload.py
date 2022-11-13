@@ -1,3 +1,7 @@
+"""
+Author: Daniel Curilla
+Description: Upload zones as a single batch job
+"""
 import os
 import re
 from datetime import datetime
@@ -32,7 +36,7 @@ with DAG(
     dag_id="upload_zones",
     description="Upload for taxi zones to GCP",
     start_date=datetime(2019, 1, 1),
-    schedule_interval="@monthly",
+    schedule_interval="@once",
     catchup=False,
 ) as dag:
 

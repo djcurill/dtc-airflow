@@ -1,8 +1,10 @@
 SHELL := /bin/bash
 MAKEFLAGS := s
 changeset := .changeset
-deployset := .changeset.deploy
+dags := .changeset.dags
+plugins := .changeset.plugins
 PYTHON := python3
+GCP_COMPOSER_BUCKET ?= ${GCP_COMPOSER_BUCKET}
 
 detect-changes:
 	branch_name=$$(git rev-parse --abbrev-ref HEAD)
@@ -11,7 +13,13 @@ detect-changes:
 	else \
 		git diff --name-only origin/main > $(changeset) ;\
 	fi
-	cat $(changeset) | python cicd/stage_changes.py > $(deployset)
+	cat $(changeset) | python cicd/stage_changes.py
 
 cicd-deploy:
-	cat $(deployset) | python cicd/deploy.py
+	echo "Deploying dags..."
+	cat $(dags) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/dags"
+	echo "Dags deployment complete!"
+	echo "Deploying plugins..."
+	cat $(plugins) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/plugins"
+	echo "Plugins deployment complete!"
+	

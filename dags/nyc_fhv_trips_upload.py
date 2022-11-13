@@ -1,11 +1,14 @@
+"""
+Author: Daniel Curilla
+Description: Upload for hire vehicle trips to GCP
+"""
 import os
 from datetime import datetime
 
 from airflow import DAG
 from airflow.operators.bash import BashOperator
-from airflow.providers.google.cloud.transfers.local_to_gcs import (
-    LocalFilesystemToGCSOperator,
-)
+from airflow.providers.google.cloud.transfers.local_to_gcs import \
+    LocalFilesystemToGCSOperator
 
 BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
 FILE_FORMAT = "parquet"
