@@ -15,7 +15,7 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import \
     LocalFilesystemToGCSOperator
 
 URL = "'https://d37ci6vzurychx.cloudfront.net/misc/taxi+_zone_lookup.csv'"
-FILE_NAME = "/zones/taxi_zone_lookup"
+FILE_NAME = "zones/taxi_zone_lookup"
 FILE_FORMAT = "csv"
 AIRFLOW_HOME = "/home/airflow/gcs/data"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
@@ -42,7 +42,7 @@ with DAG(
 
     t1 = BashOperator(
         task_id="curl",
-        bash_command=f"curl -sSL {URL} > {AIRFLOW_HOME}/{FILE_NAME}.csv",
+        bash_command=f"curl -sSL {AIRFLOW_HOME}/{FILE_NAME}.csv --create-dirs {URL}",
     )
 
     t2 = PythonOperator(
