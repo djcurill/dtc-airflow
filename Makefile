@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 MAKEFLAGS := s
 changeset := .changeset
-dags := .changeset.deploy
+dags := .changeset.dags
 plugins := .changeset.plugins
 PYTHON := python3
 GCP_COMPOSER_BUCKET ?= ${GCP_COMPOSER_BUCKET}
