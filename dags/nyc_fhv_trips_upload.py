@@ -12,7 +12,7 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import \
 
 BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
 FILE_FORMAT = "parquet"
-AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME")
+AIRFLOW_HOME = "/home/airflow/gcs/data"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 default_args = {"depends_on_past": False, "retries": 1}
 
@@ -25,7 +25,7 @@ with DAG(
 ) as dag:
 
     year_month = "{{ macros.ds_format(ds, '%Y-%m-%d', '%Y-%m') }}"
-    dataset_file = f"gcs/data/fhv/fhv_tripdata_{year_month}.{FILE_FORMAT}"
+    dataset_file = f"/fhv/fhv_tripdata_{year_month}.{FILE_FORMAT}"
     url = f"{BASE_URL}/{dataset_file}"
 
     t1 = BashOperator(

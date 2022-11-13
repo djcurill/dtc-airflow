@@ -19,7 +19,7 @@ FILE_FORMAT = "parquet"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 BIGQUERY_DATASET = os.environ.get("BIGQUERY_DATASET", "trips_data_all")
 GCP_PROJECT_ID = os.environ.get("GCS_PROJECT_ID")
-AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME")
+AIRFLOW_HOME = "/home/airflow/gcs/data"
 
 
 def upload_to_gcs(bucket_name: str, prefix: str, local_path: str):
@@ -43,7 +43,7 @@ with DAG(
 ) as dag:
 
     year_month = '{{ macros.ds_format(ds, "%Y-%m-%d", "%Y-%m") }}'
-    dataset_file = f"gcs/data/yellow_taxi/yellow_tripdata_{year_month}.{FILE_FORMAT}"
+    dataset_file = f"/yellow_taxi/yellow_tripdata_{year_month}.{FILE_FORMAT}"
     url = f"{BASE_URL}/{dataset_file}"
 
     t1 = BashOperator(
