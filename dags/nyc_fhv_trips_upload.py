@@ -25,7 +25,7 @@ with DAG(
 ) as dag:
 
     year_month = "{{ macros.ds_format(ds, '%Y-%m-%d', '%Y-%m') }}"
-    dataset_file = f"fhv_tripdata_{year_month}.{FILE_FORMAT}"
+    dataset_file = f"gcs/data/fhv/fhv_tripdata_{year_month}.{FILE_FORMAT}"
     url = f"{BASE_URL}/{dataset_file}"
 
     t1 = BashOperator(
