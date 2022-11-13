@@ -64,6 +64,7 @@ x-airflow-common:
     GOOGLE_APPLICATION_CREDENTIALS: /.google/credentials/google_credentials.json
     GCS_PROJECT_ID: dtc-dataops-dev-366316
     GCP_GCS_BUCKET: nyc-taxi-dev-dtc-dataops-dev-366316
+    AIRFLOW_HOME: /opt/airflow
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs

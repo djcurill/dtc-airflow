@@ -12,7 +12,7 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import \
 
 BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
 FILE_FORMAT = "parquet"
-AIRFLOW_HOME = "/opt/airflow"
+AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME")
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 default_args = {"depends_on_past": False, "retries": 1}
 
