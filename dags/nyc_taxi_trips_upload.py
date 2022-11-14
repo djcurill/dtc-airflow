@@ -49,7 +49,7 @@ with DAG(
 
     t1 = BashOperator(
         task_id="wget",
-        bash_command=f"mkdir -p {AIRFLOW_STAGING_DIR} && url -sSL {url} > {AIRFLOW_STAGING_DIR}/{dataset_file}",
+        bash_command=f"mkdir -p {AIRFLOW_STAGING_DIR} && curl -sSL {url} > {AIRFLOW_STAGING_DIR}/{dataset_file}",
     )
 
     t2 = PythonOperator(
