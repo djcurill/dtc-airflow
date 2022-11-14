@@ -38,7 +38,7 @@ with DAG(
     t2 = LocalFilesystemToGCSOperator(
         task_id="upload",
         src=f"{AIRFLOW_STAGING_DIR}/{dataset_file}",
-        dst=f"{GCS_LANDING_DIR}",
+        dst=f"{GCS_LANDING_DIR}/{dataset_file}",
         bucket=GCP_GCS_BUCKET,
     )
 
