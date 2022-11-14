@@ -17,7 +17,8 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import \
 URL = "'https://d37ci6vzurychx.cloudfront.net/misc/taxi+_zone_lookup.csv'"
 FILE_NAME = "taxi_zone_lookup"
 FILE_FORMAT = "csv"
-AIRFLOW_HOME = "/opt/airflow"
+AIRFLOW_HOME = "/home/airflow/gcs/data"
+ZONES_FOLDER = f"{AIRFLOW_HOME}/zones"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 default_args = {"depends_on_past": False, "retries": 1}
 
@@ -42,19 +43,19 @@ with DAG(
 
     t1 = BashOperator(
         task_id="curl",
-        bash_command=f"curl -sSL {URL} > {AIRFLOW_HOME}/{FILE_NAME}.csv",
+        bash_command=f"mkdir -p {ZONES_FOLDER} && curl -sSL {URL} > {ZONES_FOLDER}/{FILE_NAME}.{FILE_FORMAT}",
     )
 
     t2 = PythonOperator(
         task_id="parquetize",
         python_callable=to_parquet,
-        op_kwargs={"path": f"{AIRFLOW_HOME}/{FILE_NAME}.csv"},
+        op_kwargs={"path": f"{ZONES_FOLDER}/{FILE_NAME}.{FILE_FORMAT}"},
     )
 
     t3 = LocalFilesystemToGCSOperator(
         task_id="upload",
         src='{{ task_instance.xcom_pull(task_ids="parquetize") }}',
-        dst=f"raw/fhv/{FILE_NAME}.parquet",
+        dst=f"raw/zones/{FILE_NAME}.parquet",
         bucket=GCP_GCS_BUCKET,
     )
 

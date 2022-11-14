@@ -12,14 +12,14 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import \
     BigQueryCreateExternalTableOperator
 from google.cloud import storage
-from pandas import DataFrame
 
 BASE_URL = f"https://d37ci6vzurychx.cloudfront.net/trip-data"
 FILE_FORMAT = "parquet"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 BIGQUERY_DATASET = os.environ.get("BIGQUERY_DATASET", "trips_data_all")
 GCP_PROJECT_ID = os.environ.get("GCS_PROJECT_ID")
-AIRFLOW_HOME = "/opt/airflow"
+AIRFLOW_STAGING_DIR = os.environ.get("AIRFLOW_STAGING_DIR")
+GCS_LANDING_DIR = f"raw/yellow_trip_data"
 
 
 def upload_to_gcs(bucket_name: str, prefix: str, local_path: str):
@@ -36,7 +36,8 @@ with DAG(
     description="Upload nyc taxi trips data to gcp",
     schedule_interval="@monthly",
     start_date=datetime(2019, 1, 1),
-    catchup=False,
+    end_date=datetime(2020, 1, 1),
+    catchup=True,
     max_active_runs=2,
     tags=["GCP", "BigQuery", "Upload"],
     default_args=default_args,
@@ -48,7 +49,7 @@ with DAG(
 
     t1 = BashOperator(
         task_id="wget",
-        bash_command=f"curl -sSL {url} > {AIRFLOW_HOME}/{dataset_file}",
+        bash_command=f"mkdir -p {AIRFLOW_STAGING_DIR} && curl -sSL {url} > {AIRFLOW_STAGING_DIR}/{dataset_file}",
     )
 
     t2 = PythonOperator(
@@ -56,12 +57,12 @@ with DAG(
         python_callable=upload_to_gcs,
         op_kwargs={
             "bucket_name": GCP_GCS_BUCKET,
-            "prefix": f"raw/{dataset_file}",
-            "local_path": f"{AIRFLOW_HOME}/{dataset_file}",
+            "prefix": f"{GCS_LANDING_DIR}/{dataset_file}",
+            "local_path": f"{AIRFLOW_STAGING_DIR}/{dataset_file}",
         },
     )
 
-    t3 = BashOperator(task_id="rm", bash_command=f"rm {AIRFLOW_HOME}/{dataset_file}")
+    t3 = BashOperator(task_id="rm", bash_command=f"rm {AIRFLOW_STAGING_DIR}/{dataset_file}")
 
     t4 = BigQueryCreateExternalTableOperator(
         task_id="create_external_table",
@@ -73,7 +74,7 @@ with DAG(
             },
             "externalDataConfiguration": {
                 "sourceFormat": "PARQUET",
-                "sourceUris": [f"gs://{GCP_GCS_BUCKET}/raw/{dataset_file}"],
+                "sourceUris": [f"gs://{GCP_GCS_BUCKET}/raw/yellow_trip_data/{dataset_file}"],
             },
         },
     )
