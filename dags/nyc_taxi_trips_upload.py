@@ -37,7 +37,7 @@ with DAG(
     schedule_interval="@monthly",
     start_date=datetime(2019, 1, 1),
     end_date=datetime(2020, 1, 1),
-    catchup=False,
+    catchup=True,
     max_active_runs=2,
     tags=["GCP", "BigQuery", "Upload"],
     default_args=default_args,
