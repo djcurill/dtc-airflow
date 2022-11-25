@@ -22,8 +22,9 @@ with DAG(
     dag_id="upload_for_hire_vehicles",
     description="Upload for hire vehicles to GCP",
     start_date=datetime(2019, 1, 1),
+    end_date=(2020, 1, 1),
     schedule_interval="@monthly",
-    catchup=False,
+    catchup=True,
 ) as dag:
 
     year_month = "{{ macros.ds_format(ds, '%Y-%m-%d', '%Y-%m') }}"
