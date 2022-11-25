@@ -17,14 +17,14 @@ detect-changes:
 
 deploy-dags:
 	if [ -s $(dags) ] ; then \
-		cat $(dags) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/dags"; \
+		cat $(dags) | { read -d '' o; gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/$(o)" }; \
 	else \
 		echo "No changes detected from DAGs"; \
 	fi
 
 deploy-plugins:
 	if [ -s $(plugins) ]; then \
-		cat $(plugins) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/dags"; \
+		cat $(plugins) | { read -d '' o; gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/$(o)" }; \
 	else \
 		echo "No changes detected from plugins"; \
 	fi
