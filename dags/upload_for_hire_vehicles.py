@@ -18,7 +18,7 @@ GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 default_args = {"depends_on_past": False, "retries": 1}
 
 with DAG(
-    dag_id="upload_fhv",
+    dag_id="upload_for_hire_vehicles",
     description="Upload for hire vehicles to GCP",
     start_date=datetime(2019, 1, 1),
     schedule_interval="@monthly",
@@ -34,10 +34,10 @@ with DAG(
         bash_command=f"curl -sSL {url} > {AIRFLOW_HOME}/{dataset_file}",
     )
 
-    # t2 = PythonOperator(
-    #     task_id="tranform_fhv_schema",
-    #     python_callabe=transform_fhv_schema,
-    #     op_args=(f"{AIRFLOW_HOME}/{dataset_file}",))
+    t2 = PythonOperator(
+        task_id="tranform_fhv_schema",
+        python_callabe=transform_fhv_schema,
+        op_args=(f"{AIRFLOW_HOME}/{dataset_file}",))
 
     t3 = LocalFilesystemToGCSOperator(
         task_id="upload",
@@ -48,5 +48,5 @@ with DAG(
 
     t4 = BashOperator(task_id="rm", bash_command=f"rm {AIRFLOW_HOME}/{dataset_file}")
 
-    # t1 >> t2 >> t3 >> t4
-    t1 >> t3 >> t4
+    t1 >> t2 >> t3 >> t4
+    # t1 >> t3 >> t4
