@@ -14,5 +14,5 @@ def transform_fhv_schema(path:str):
     ("SR_Flag", pa.binary()),
     ("Affiliated_base_number", pa.string())
     ])
-    table = pa.read_table(path, schema=fhv_schema)
+    table = pq.read_table(path, schema=fhv_schema)
     pq.write_table(table, path)
