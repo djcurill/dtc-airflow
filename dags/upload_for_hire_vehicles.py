@@ -17,8 +17,6 @@ FILE_FORMAT = "parquet"
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow")
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 
-DAG()
-
 with DAG(
     dag_id="upload_for_hire_vehicles",
     description="Upload for hire vehicles to GCP",
