@@ -4,7 +4,7 @@ changeset := .changeset
 dags := .changeset.dags
 plugins := .changeset.plugins
 PYTHON := python3
-GCP_COMPOSER_BUCKET ?= ${GCP_COMPOSER_BUCKET}
+GCP_COMPOSER_BUCKET ?= /us-west1-dtc-cloud-composer-10fe5001-bucket
 
 detect-changes:
 	branch_name=$$(git rev-parse --abbrev-ref HEAD)
