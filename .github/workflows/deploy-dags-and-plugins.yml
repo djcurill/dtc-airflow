@@ -53,4 +53,4 @@ jobs:
       - name: 'Deploy to GCP'
         env:
           GCP_COMPOSER_BUCKET: ${{ secrets.GCP_COMPOSER_BUCKET  }}
-        run: make cicd-deploy
+        run: make sync
