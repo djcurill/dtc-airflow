@@ -34,7 +34,7 @@ cicd-deploy:
 	$(MAKE) deploy-plugins
 
 sync:
-	gsutil -m rsync -r ./dags "gs://$(GCP_COMPOSER_BUCKET)"
+	gsutil -m rsync -r ./dags "gs://$(GCP_COMPOSER_BUCKET)/dags"
 
 
 	
