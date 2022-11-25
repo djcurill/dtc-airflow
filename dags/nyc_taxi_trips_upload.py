@@ -19,7 +19,7 @@ FILE_FORMAT = "parquet"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 BIGQUERY_DATASET = os.environ.get("BIGQUERY_DATASET", "trips_data_all")
 GCP_PROJECT_ID = os.environ.get("GCS_PROJECT_ID")
-AIRFLOW_HOME = "/opt/airflow"
+AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow")
 
 
 def upload_to_gcs(bucket_name: str, prefix: str, local_path: str):

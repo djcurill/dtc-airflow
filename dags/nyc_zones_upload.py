@@ -17,7 +17,7 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import \
 URL = "'https://d37ci6vzurychx.cloudfront.net/misc/taxi+_zone_lookup.csv'"
 FILE_NAME = "taxi_zone_lookup"
 FILE_FORMAT = "csv"
-AIRFLOW_HOME = "/opt/airflow"
+AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow")
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
 default_args = {"depends_on_past": False, "retries": 1}
 
