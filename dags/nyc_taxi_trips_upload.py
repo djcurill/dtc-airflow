@@ -1,5 +1,5 @@
 """
-Author: Daniel Curilla
+Author: Dan Curilla
 Description: Upload yellow taxi trips to GCP
 """
 import os

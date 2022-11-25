@@ -1,5 +1,5 @@
 """
-Author: Daniel Curilla
+Author: Dan Curilla
 Description: Upload zones as a single batch job
 """
 import os

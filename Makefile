@@ -15,11 +15,27 @@ detect-changes:
 	fi
 	cat $(changeset) | python cicd/stage_changes.py
 
-cicd-deploy:
-	echo "Deploying dags..."
-	cat $(dags) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/dags"
-	echo "Dags deployment complete!"
-	echo "Deploying plugins..."
-	cat $(plugins) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/plugins"
-	echo "Plugins deployment complete!"
+deploy-dags:
+	if [ -s $(dags) ]; then
+		echo "Deploying dags..."
+		cat $(dags) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/dags"
+		echo "Dags deployment complete!"
+	else
+		echo "No changes detected from DAGs"
+	fi
+
+deploy-plugins:
+	if [ -s $(plugins) ]; then
+		echo "Deploying plugins..."
+		cat $(plugins) | gsutil -m cp -I "gs://$(GCP_COMPOSER_BUCKET)/dags"
+		echo "Plugins deployment complete!"
+	else
+		echo "No changes detected from plugins"
+	fi
+
+cicd-deploy: 
+	$(MAKE) deploy-dags 
+	$(MAKE) deploy-plugins
+
+
 	

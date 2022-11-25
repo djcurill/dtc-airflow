@@ -1,5 +1,5 @@
 """
-Author: Daniel Curilla
+Author: Dan Curilla
 Description: Upload for hire vehicle trips to GCP
 """
 import os
