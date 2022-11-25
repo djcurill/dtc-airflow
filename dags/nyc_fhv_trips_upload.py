@@ -4,7 +4,6 @@ Description: Upload for hire vehicle trips to GCP
 """
 import os
 from datetime import datetime
-from fhv.schema import transform_fhv_schema
 
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -35,10 +34,10 @@ with DAG(
         bash_command=f"curl -sSL {url} > {AIRFLOW_HOME}/{dataset_file}",
     )
 
-    t2 = PythonOperator(
-        task_id="tranform_fhv_schema",
-        python_callabe=transform_fhv_schema,
-        op_args=(f"{AIRFLOW_HOME}/{dataset_file}",))
+    # t2 = PythonOperator(
+    #     task_id="tranform_fhv_schema",
+    #     python_callabe=transform_fhv_schema,
+    #     op_args=(f"{AIRFLOW_HOME}/{dataset_file}",))
 
     t3 = LocalFilesystemToGCSOperator(
         task_id="upload",
@@ -49,4 +48,5 @@ with DAG(
 
     t4 = BashOperator(task_id="rm", bash_command=f"rm {AIRFLOW_HOME}/{dataset_file}")
 
-    t1 >> t2 >> t3 >> t4
+    # t1 >> t2 >> t3 >> t4
+    t1 >> t3 >> t4
