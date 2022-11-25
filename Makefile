@@ -35,7 +35,6 @@ cicd-deploy:
 
 sync:
 	gsutil -m rsync -r ./dags "gs://$(GCP_COMPOSER_BUCKET)/dags"
-	gsutil -m rsync -r ./plugins "gs://$(GCP_COMPOSER_BUCKET)/plugins"
 
 
 	
