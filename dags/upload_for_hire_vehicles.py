@@ -5,7 +5,7 @@ Description: Upload for hire vehicle trips to GCP
 import os
 from datetime import datetime
 
-from fhv.schema import transform_fhv_schema_v2
+from utils.schema import transform_fhv_schema, df_snake_case
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
@@ -14,9 +14,8 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import \
 
 BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
 FILE_FORMAT = "parquet"
-AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow")
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
-AIRFLOW_HOME = "/home/airflow/gcs/data"
+DATA_DIR = "/home/airflow/gcs/data"
 
 with DAG(
     dag_id="upload_fhv",
@@ -34,21 +33,27 @@ with DAG(
 
     t1 = BashOperator(
         task_id="curl",
-        bash_command=f"curl -sSL {url} > {AIRFLOW_HOME}/{dataset_file}",
+        bash_command=f"curl -sSL {url} > {DATA_DIR}/{dataset_file}",
     )
 
     t2 = PythonOperator(
         task_id="tranform_fhv_schema",
-        python_callable=transform_fhv_schema_v2,
-        op_args=(f"{AIRFLOW_HOME}/{dataset_file}",))
+        python_callable=transform_fhv_schema,
+        op_args=(f"{DATA_DIR}/{dataset_file}",))
 
-    t3 = LocalFilesystemToGCSOperator(
+    t3 = PythonOperator(
+        task_id="to_snake_case",
+        python_callable=df_snake_case,
+        op_args=(f"{DATA_DIR}/{dataset_file}",)
+    )
+
+    t4 = LocalFilesystemToGCSOperator(
         task_id="upload",
-        src=f"{AIRFLOW_HOME}/{dataset_file}",
+        src=f"{DATA_DIR}/{dataset_file}",
         dst=f"raw/fhv/{dataset_file}",
         bucket=GCP_GCS_BUCKET,
     )
 
-    t4 = BashOperator(task_id="rm", bash_command=f"rm {AIRFLOW_HOME}/{dataset_file}")
+    t5 = BashOperator(task_id="rm", bash_command=f"rm {DATA_DIR}/{dataset_file}")
 
-    t1 >> t2 >> t3 >> t4
+    t1 >> t2 >> t3 >> t4 >> t5

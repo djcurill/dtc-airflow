@@ -4,22 +4,18 @@ test
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pandas as pd
+import re
+
+def snake_case(s:str) -> str:
+    """https://stackoverflow.com/questions/69079812/how-to-convert-string-to-snakecase-format-in-python"""
+    return re.sub(r"(?<=[a-z])(?=[A-Z])|[^a-zA-Z]", "_", s).strip("_").lower()
+
+def df_snake_case(path:str) -> None:
+    df = pd.read_parquet(path)
+    df.rename(columns = {col:snake_case(col) for col in df.columns}, inplace=True)
+    df.to_parquet(path)
 
 def transform_fhv_schema(path:str):
-    fhv_schema = pa.schema([
-    ("dispatching_base_num", pa.string()),
-    ("pickup_datetime", pa.timestamp("us")),
-    ("dropOff_datetime", pa.timestamp("us")),
-    ("PUlocationID", pa.float64()),
-    ("DOlocationID", pa.float64()),
-    ("SR_Flag", pa.binary()),
-    ("Affiliated_base_number", pa.string())
-    ])
-    table = pq.read_table(path)
-    table.cast(fhv_schema)
-    pq.write_table(table, path)
-
-def transform_fhv_schema_v2(path:str):
     table = pq.read_table(path)
     df = table.to_pandas(timestamp_as_object=True)
     df['SR_Flag'] = df['SR_Flag'].fillna(0)
