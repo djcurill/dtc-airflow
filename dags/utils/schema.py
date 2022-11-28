@@ -20,9 +20,9 @@ def transform_fhv_schema(path:str):
     # del table
     df = table.to_pandas(timestamp_as_object=True)
     del table
-    # df['SR_Flag'] = df['SR_Flag'].fillna(0)
-    # df["pickup_datetime"] = pd.to_datetime(df["pickup_datetime"], errors="coerce")
-    # df["dropOff_datetime"] = pd.to_datetime(df["dropOff_datetime"], errors="coerce")
+    df['SR_Flag'] = df['SR_Flag'].fillna(0)
+    df["pickup_datetime"] = pd.to_datetime(df["pickup_datetime"], errors="coerce")
+    df["dropOff_datetime"] = pd.to_datetime(df["dropOff_datetime"], errors="coerce")
     # df = df.astype({
     #     'dispatching_base_num': str,
     #     "pickup_datetime": "datetime64[ns]",
