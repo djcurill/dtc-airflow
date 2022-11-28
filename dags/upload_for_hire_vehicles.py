@@ -3,7 +3,7 @@ Author: Daniel Curilla
 Description: Upload for hire vehicle trips to GCP
 """
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from utils.schema import transform_fhv_schema, df_snake_case
 from airflow import DAG
@@ -25,6 +25,10 @@ with DAG(
     schedule_interval="@monthly",
     max_active_runs=1,
     catchup=True,
+    default_args={
+        "retries": 3,
+        "retry_delay": timedelta(seconds=15)
+    }
 ) as dag:
 
     year_month = "{{ macros.ds_format(ds, '%Y-%m-%d', '%Y-%m') }}"
