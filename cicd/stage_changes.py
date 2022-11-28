@@ -12,4 +12,4 @@ def filter_changeset(lines:List[str], pattern:str, filename:str) -> None:
 if __name__ == "__main__":
     lines = [file.strip() for file in sys.stdin.readlines()]
     filter_changeset(lines, r'dags/.*\.py', '.changeset.dags')
-    filter_changeset(lines, r'dags/.*\.py', '.changeset.plugins')
+    filter_changeset(lines, r'plugins/.*\.py', '.changeset.plugins')

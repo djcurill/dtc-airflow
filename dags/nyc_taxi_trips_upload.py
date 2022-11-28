@@ -1,25 +1,21 @@
 """
-Author: Daniel Curilla
+Author: Dan Curilla
 Description: Upload yellow taxi trips to GCP
 """
 import os
 from datetime import datetime
 
-import pyarrow.parquet as pq
+
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.operators.bigquery import \
-    BigQueryCreateExternalTableOperator
 from google.cloud import storage
-from pandas import DataFrame
+from utils.schema import df_snake_case
 
 BASE_URL = f"https://d37ci6vzurychx.cloudfront.net/trip-data"
 FILE_FORMAT = "parquet"
 GCP_GCS_BUCKET = os.environ.get("GCP_GCS_BUCKET")
-BIGQUERY_DATASET = os.environ.get("BIGQUERY_DATASET", "trips_data_all")
-GCP_PROJECT_ID = os.environ.get("GCS_PROJECT_ID")
-AIRFLOW_HOME = "/opt/airflow"
+DATA_DIR = "/home/airflow/gcs/data"
 
 
 def upload_to_gcs(bucket_name: str, prefix: str, local_path: str):
@@ -32,7 +28,7 @@ def upload_to_gcs(bucket_name: str, prefix: str, local_path: str):
 default_args = {"depends_on_past": False, "retries": 1}
 
 with DAG(
-    dag_id="nyc_taxi_trips_upload",
+    dag_id="upload_taxi",
     description="Upload nyc taxi trips data to gcp",
     schedule_interval="@monthly",
     start_date=datetime(2019, 1, 1),
@@ -48,34 +44,23 @@ with DAG(
 
     t1 = BashOperator(
         task_id="wget",
-        bash_command=f"curl -sSL {url} > {AIRFLOW_HOME}/{dataset_file}",
+        bash_command=f"curl -sSL {url} > {DATA_DIR}/{dataset_file}",
     )
 
     t2 = PythonOperator(
+        task_id="to_snake_case",
+        python_callable=df_snake_case,
+        op_args=(f"{DATA_DIR}/{dataset_file}",)
+    )
+
+    t3 = PythonOperator(
         task_id="gcs_upload",
         python_callable=upload_to_gcs,
         op_kwargs={
             "bucket_name": GCP_GCS_BUCKET,
             "prefix": f"raw/{dataset_file}",
-            "local_path": f"{AIRFLOW_HOME}/{dataset_file}",
+            "local_path": f"{DATA_DIR}/{dataset_file}",
         },
     )
 
-    t3 = BashOperator(task_id="rm", bash_command=f"rm {AIRFLOW_HOME}/{dataset_file}")
-
-    t4 = BigQueryCreateExternalTableOperator(
-        task_id="create_external_table",
-        table_resource={
-            "tableReference": {
-                "projectId": GCP_PROJECT_ID,
-                "datasetId": BIGQUERY_DATASET,
-                "tableId": "external_table",
-            },
-            "externalDataConfiguration": {
-                "sourceFormat": "PARQUET",
-                "sourceUris": [f"gs://{GCP_GCS_BUCKET}/raw/{dataset_file}"],
-            },
-        },
-    )
-
-    t1 >> t2 >> t3 >> t4
+    t1 >> t2 >> t3
