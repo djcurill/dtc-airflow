@@ -23,7 +23,7 @@ with DAG(
     start_date=datetime(2019, 1, 1),
     end_date=datetime(2020, 1, 1),
     schedule_interval="@monthly",
-    max_active_runs=2,
+    max_active_runs=1,
     catchup=True,
 ) as dag:
 
